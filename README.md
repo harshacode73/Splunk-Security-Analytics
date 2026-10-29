@@ -1,155 +1,210 @@
-## Splunk-dashboard
-A Splunk-based SOC dashboard for security event monitoring, SSH brute-force detection, and severity classification.
- # SOC Security Monitoring Dashboard Using Splunk
+# Splunk Dashboard — SOC Security Monitoring
+
+A Splunk-based SOC dashboard for security event monitoring, SSH brute-force detection, severity classification, and security event investigation.
 
 ## 1. Project Overview
 
-The SOC Security Monitoring Dashboard is a cybersecurity monitoring project developed using Splunk Enterprise. It helps security analysts review security events, identify suspicious authentication activity, classify potential threats by severity, and investigate events using MITRE ATT&CK technique mappings.
+The **SOC Security Monitoring Dashboard** is a cybersecurity project built using Splunk Enterprise to support security monitoring and investigation. It enables analysts to search collected security logs, identify suspicious authentication activity, classify events using configurable detection rules, and investigate potential threats.
 
-The dashboard brings multiple security-event categories into one place, making it easier to monitor events and investigate potentially malicious activity.
+The project focuses on Windows OpenSSH authentication logs and can be extended to include Kali Linux authentication logs and additional Windows security event sources.
 
-## 2. Objectives
+## 2. Project Objectives
 
 - Monitor security events collected in Splunk.
-- Identify suspicious SSH authentication activity.
-- Detect patterns associated with brute-force attempts.
-- Classify events according to severity.
-- Investigate PowerShell-related activity.
-- Identify Windows Remote Management activity.
-- Detect possible Windows audit-log clearing.
-- Map detected activity to relevant MITRE ATT&CK techniques.
-- Present security information through a dashboard.
+- Analyze failed and successful SSH authentication attempts.
+- Identify repeated authentication failures that may indicate brute-force activity.
+- Classify events according to configurable severity rules.
+- Investigate PowerShell and Windows Remote Management activity when the relevant logs are available.
+- Identify potential Windows audit-log-clearing activity.
+- Map selected detection patterns to MITRE ATT&CK techniques.
+- Present relevant security information through a centralized dashboard.
 
 ## 3. Tools and Technologies
 
-- Splunk Enterprise
-- Search Processing Language (SPL)
-- Windows
-- OpenSSH
-- Kali Linux for authorized lab testing
-- XML for dashboard configuration
-- MITRE ATT&CK framework
+| Technology | Purpose |
+|---|---|
+| Splunk Enterprise | Log indexing, searching, and visualization |
+| Search Processing Language (SPL) | Security-event analysis and detection rules |
+| Windows | Monitoring platform and Windows event sources |
+| OpenSSH | SSH authentication event analysis |
+| Kali Linux | Authorized lab testing and Linux log collection |
+| Universal Forwarder | Forwarding supported logs to Splunk |
+| XML | Dashboard configuration |
+| MITRE ATT&CK | Mapping potential adversary techniques |
 
-## 4. Dashboard Features
+## 4. Key Features
 
-### Critical Alerts
-Displays events classified as critical by the configured detection rules.
+### Security Event Monitoring
+Search and review security events collected in the configured Splunk index.
 
-### High Alerts
-Displays events that meet the configured high-severity conditions.
+### SSH Authentication Analysis
+Examine failed logins, invalid usernames, and successful authentication events.
 
-### Medium Alerts
-Displays suspicious activity that meets the configured medium-severity conditions.
+### Potential Brute-Force Detection
+Identify repeated authentication failures using configurable thresholds and time windows. These detections indicate suspicious patterns and require further investigation.
 
-### Low Alerts
-Displays events classified as low severity by the configured rules.
-
-### Brute-Force Investigation
-Displays authentication events associated with potential brute-force activity.
-
-### MITRE ATT&CK Mapping
-Associates selected event patterns with relevant ATT&CK techniques.
+### Severity Classification
+Group matching events into Critical, High, Medium, Low, or Unclassified categories using project-defined rules.
 
 ### PowerShell Investigation
-Displays events matching configured PowerShell-related indicators.
+Search for configured PowerShell-related indicators when the required Windows event sources are being collected.
 
-### WinRM Investigation
-Displays events associated with Windows Remote Management.
+### Windows Remote Management (WinRM)
+Investigate matching WinRM-related events when the relevant Windows logs are available.
 
-### Audit-Log Clearing
-Displays events matching configured indicators of Windows audit-log clearing.
+### Audit-Log Clearing Detection
+Search for Windows events associated with possible security-log clearing, including Security Event ID 1102 when the corresponding audit logs are collected.
 
-### Recent Security Events
-Provides a consolidated view of recent events.
+### MITRE ATT&CK Mapping
+Associate selected event patterns with relevant ATT&CK techniques to support investigation and documentation.
 
-### Events by Host
-Visualizes the number of indexed events associated with each host.
+### Recent Events and Host Overview
+Review recent security events and compare indexed event volumes across hosts.
 
 ## 5. Severity Classification
 
-The dashboard uses configurable rules to classify events.
+Severity is assigned using configurable detection rules rather than being treated as an inherent property of every raw log event.
 
-| Severity | Example detection condition |
+| Severity | Example condition |
 |---|---|
-| Critical | Audit-log clearing or a suspicious authentication sequence meeting the configured critical rule |
-| High | Repeated failed authentication attempts or configured high-risk command indicators |
-| Medium | Multiple failed authentication attempts or configured suspicious PowerShell indicators |
-| Low | Successful authentication without a matching higher-severity condition |
-| Unclassified | Events that do not match the configured detection rules |
+| Critical | An event or correlated sequence meeting a configured critical-risk rule |
+| High | Repeated authentication failures or another validated high-risk pattern |
+| Medium | Multiple failed logins or suspicious activity requiring investigation |
+| Low | Lower-risk activity, such as a successful login without additional suspicious indicators |
+| Unclassified | Events that do not match the configured classification rules |
 
-These classifications are rule-based and should be validated against the actual event data. A matching keyword alone does not prove that an attack occurred.
+**Note:** These are example classification criteria. Actual severity depends on the implemented SPL, event context, thresholds, and investigation findings. A successful login is not automatically safe, and a keyword match alone does not prove an attack.
 
 ## 6. MITRE ATT&CK Mapping
 
-The project includes mappings for selected activity categories.
+The project uses selected MITRE ATT&CK techniques to document activity that may be consistent with known adversary behavior.
 
-| Activity | Technique | Technique ID |
+| Activity | Technique | ID |
 |---|---|---|
-| Brute-force activity | Brute Force | T1110 |
-| Windows Remote Management | Remote Services: Windows Remote Management | T1021.006 |
-| PowerShell activity | Command and Scripting Interpreter: PowerShell | T1059.001 |
-| Clearing Windows event logs | Indicator Removal: Clear Windows Event Logs | T1070.001 |
+| Brute-force attempts | Brute Force | [T1110](https://attack.mitre.org/techniques/T1110/) |
+| Windows Remote Management | Remote Services: Windows Remote Management | [T1021.006](https://attack.mitre.org/techniques/T1021/006/) |
+| PowerShell execution | Command and Scripting Interpreter: PowerShell | [T1059.001](https://attack.mitre.org/techniques/T1059/001/) |
+| Windows event-log clearing | Indicator Removal: Clear Windows Event Logs | [T1070.001](https://attack.mitre.org/techniques/T1070/001/) |
 
-The mappings indicate potential techniques associated with matching event patterns. They do not establish that a technique was successfully executed.
+These mappings provide investigative context. They do not independently confirm that an adversary used a technique or that a security incident occurred.
 
-## 7. Environment
+## 7. Lab Environment
 
-The lab uses Splunk Enterprise to search security events indexed under the `harsha` index.
+The project uses Splunk Enterprise on a Windows monitoring machine. Security events are stored in the `harsha` index.
 
-The environment can be extended to collect authorized Windows security logs, OpenSSH operational logs, and other supported event sources.
+The environment is designed to support:
 
-Actual event collection depends on the configured Splunk inputs and available data sources.
+- Windows OpenSSH operational logs.
+- Kali Linux authentication logs through the Universal Forwarder.
+- Additional Windows security and operational logs, where configured.
 
-## 8. Installation and Setup
+Log availability depends on the installed components, enabled inputs, permissions, forwarding configuration, and event-source settings.
+
+## 8. Setup and Configuration
 
 1. Install Splunk Enterprise on the monitoring machine.
-2. Configure an index for the lab security events.
-3. Configure supported event sources to send logs to Splunk.
-4. Verify that events appear in the intended index.
-5. Open Splunk Search and Reporting.
-6. Test the SPL queries in the `queries` directory.
-7. Import or recreate the dashboard using the XML in `dashboards`.
-8. Verify that the dashboard panels return expected results.
-9. Test the detection rules using authorized lab events.
+2. Create or select the index used for lab security events.
+3. Configure supported Windows and Linux log sources.
+4. Configure receiving and forwarding settings if using a Universal Forwarder.
+5. Verify connectivity and confirm that events are indexed.
+6. Open Splunk Search and Reporting.
+7. Run and validate the SPL searches in the `queries/` directory.
+8. Import or recreate the dashboard using the configuration in `dashboards/`.
+9. Configure saved alerts separately using the instructions in `docs/alert-configuration.md`.
+10. Test the searches, alerts, and dashboard panels using authorized lab events.
 
-Refer to `docs/setup.md` for detailed configuration instructions.
+See ['docs/setup.md'](docs/setup.md) and [docs/log-collection.md](docs/log-collection.md) for the detailed setup instructions.
 
-## 9. Testing
+## 9. Testing and Validation
 
-Test the project using authorized lab-generated events, including:
+Use authorized lab-generated events to validate the implemented detections.
 
-- Failed SSH authentication attempts.
+Suggested test cases:
+
+- Failed SSH authentication.
 - Successful SSH authentication.
-- Repeated failed authentication attempts from the same source.
-- PowerShell-related events.
-- Windows Remote Management events.
-- Audit-log-clearing events, when safely simulated in a dedicated lab.
+- Invalid SSH usernames.
+- Repeated failures from the same source IP.
+- PowerShell-related activity, if collected.
+- WinRM-related activity, if collected.
+- Windows audit-log-clearing events in a dedicated lab, where safely simulated.
 
-Confirm that each event is indexed and that the corresponding search returns the expected result.
+For each test, verify that:
 
-Do not test against systems without permission.
+1. The relevant event is generated.
+2. Splunk receives and indexes the event.
+3. The expected SPL search returns the event.
+4. The severity classification matches the configured rule.
+5. Any associated saved alert triggers under the intended conditions.
+6. The corresponding dashboard panel displays the expected result.
 
-## 10. Limitations
+Record the actual test results and document any missing data sources or known detection limitations.
 
-- Detection depends on the logs collected and indexed by Splunk.
-- Event formats differ between Windows and Linux.
-- Regex-based detection can produce false positives and false negatives.
-- Severity thresholds must be validated against event timestamps and source identities.
-- Dashboard refresh does not automatically execute response actions.
-- Saved alerts must be configured separately for notifications or other alert actions.
-- MITRE ATT&CK mappings describe potential techniques and require investigation.
+## 10. Project Structure
 
-## 11. Future Improvements
+```text
+Splunk-dashboard/
+├── README.md
+├── dashboards/
+│   └── soc_security_dashboard.xml
+├── queries/
+│   ├── ssh_brute_force.spl
+│   ├── ssh_successful_login.spl
+│   ├── ssh_invalid_user.spl
+│   ├── ssh_failures_by_source_ip.spl
+│   ├── severity_counts.spl
+│   ├── high_severity.spl
+│   ├── medium_severity.spl
+│   ├── critical_severity.spl
+│   ├── powershell_detection.spl
+│   ├── winrm_detection.spl
+│   ├── audit_log_cleared.spl
+│   ├── recent_security_events.spl
+│   ├── events_by_host.spl
+│   └── mitre_mapping.spl
+├── alerts/
+│   ├── ssh_brute_force_alert.md
+│   ├── windows_security_alert.md
+│   └── linux_authentication_alert.md
+├── configs/
+│   └── inputs.conf.example
+├── docs/
+│   ├── setup.md
+│   ├── log-collection.md
+│   ├── log-analysis.md
+│   └── alert-configuration.md
+└── screenshots/
+```
 
-- Add validated scheduled alerts and notification actions.
-- Improve event normalization and field extraction.
-- Add source-IP and username-based correlation.
-- Reduce duplicate alert notifications.
-- Add dashboards for additional Windows security events.
-- Integrate endpoint detection and response data.
-- Add investigation notes and incident-response documentation.
-- Create repeatable tests for each detection rule.
+*This is the intended repository structure. Include only files that actually exist in your repository, and update the tree if your filenames differ.*
 
-## 12. Disclaimer
+## 11. Limitations
 
-This project is intended for cybersecurity education, defensive monitoring, and authorized lab testing. All testing should be performed only on systems and networks for which permission has been granted.
+- Detection quality depends on the logs available to Splunk.
+- Windows and Linux events may use different field names and formats.
+- Keyword- and regex-based searches can generate false positives and false negatives.
+- Brute-force thresholds must be evaluated using the correct time range, source IP, and host.
+- A dashboard refresh does not automatically perform incident-response actions.
+- Saved alerts require separate configuration and testing.
+- MITRE ATT&CK mappings indicate potential relevance, not confirmed attacker behavior.
+- Missing event sources can prevent a detection from finding relevant activity.
+
+## 12. Future Improvements
+
+- Configure and validate scheduled alerts and notification actions.
+- Improve field extraction, normalization, and event correlation.
+- Add username-, host-, and source-IP-based investigation panels.
+- Tune thresholds to reduce false positives.
+- Expand Windows and Linux security-event coverage.
+- Add incident investigation notes and response procedures.
+- Automate repeatable tests for detection rules.
+- Add sanitized screenshots showing verified search results and dashboard panels.
+
+## 13. Disclaimer
+
+This project is intended for cybersecurity education, defensive monitoring, and authorized lab testing. Perform security testing only on systems and networks for which you have explicit permission.
+
+---
+
+**Project:** Splunk-Security-Analystics
+**Focus:** Security monitoring, authentication analysis, detection engineering, and investigation
