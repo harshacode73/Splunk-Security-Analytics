@@ -1,0 +1,76 @@
+
+# Log Analysis and Detection
+
+## 1. Objective
+
+Analyze collected security events to identify suspicious authentication activity and support basic SOC investigation workflows.
+
+## 2. SSH Authentication Failures
+
+```spl
+index=harsha
+("Failed password" OR "Invalid user")
+| stats count as failed_attempts by host source
+| sort - failed_attempts
+```
+
+Purpose:
+Identify sources associated with repeated SSH authentication failures.
+
+## 3. Failed Logins by Source IP
+
+```spl
+index=harsha "Failed password"
+| rex "from (?<src_ip>\d{1,3}(?:\.\d{1,3}){3})"
+| stats count as failed_attempts by src_ip
+| sort - failed_attempts
+```
+
+Purpose:
+Summarize failed password attempts by source IP address.
+
+## 4. Successful SSH Logins
+
+```spl
+index=harsha "Accepted password"
+| table _time host source _raw
+| sort - _time
+```
+
+Purpose:
+Review successful SSH authentication events and investigate unexpected logins.
+
+## 5. Invalid User Attempts
+
+```spl
+index=harsha "Invalid user"
+| table _time host source _raw
+| sort - _time
+```
+
+Purpose:
+Identify attempts involving usernames that are not recognized by the SSH service.
+
+## 6. Severity Classification
+
+Severity is assigned using configurable thresholds and event context.
+
+- Low: isolated or routine events.
+- Medium: repeated failures that warrant review.
+- High: sustained or numerous failures.
+- Critical: a significant event or a combination of suspicious indicators requiring urgent investigation.
+
+These are project-defined classifications, not universal standards. Validate thresholds against actual lab data.
+
+## 7. Investigation Workflow
+
+1. Identify the source IP and destination host.
+2. Determine the time and frequency of the activity.
+3. Check whether successful logins followed failed attempts.
+4. Review related events around the same time.
+5. Record evidence and classify severity.
+6. Document the investigation and recommended response.
+
+## 8. Limitations
+
+Authentication failures alone do not prove a successful brute-force attack. Consider the number of attempts, time window, source, target, and any subsequent successful login.

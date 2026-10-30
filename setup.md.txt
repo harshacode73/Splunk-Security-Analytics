@@ -1,0 +1,71 @@
+
+# SOC Security Monitoring Dashboard — Setup Guide
+
+## 1. Project Overview
+
+This project uses Splunk Enterprise to monitor security events from a Windows host and a Kali Linux virtual machine. It demonstrates log collection, event analysis, severity classification, alerting, and dashboard visualization.
+
+## 2. Lab Environment
+
+| Component | Configuration |
+|---|---|
+| Host operating system | Windows |
+| SIEM platform | Splunk Enterprise |
+| Linux test machine | Kali Linux in VirtualBox |
+| Linux log collector | Splunk Universal Forwarder |
+| Splunk Web | http://localhost:8000 |
+| Forwarding port | 9997, if configured |
+| Splunk index | harsha |
+
+## 3. Prerequisites
+
+- Splunk Enterprise installed on Windows.
+- Kali Linux configured in VirtualBox.
+- Splunk Universal Forwarder installed on Kali.
+- Network connectivity between Kali and Windows.
+- A receiving port enabled in Splunk Enterprise.
+- Permission to read the log files being monitored.
+
+## 4. Log Collection Setup
+
+1. Enable the receiving port in Splunk Enterprise.
+2. Configure the Universal Forwarder to send data to the Windows host.
+3. Configure the forwarder to monitor the required Linux log files.
+4. Configure Windows event log inputs for the required Windows sources.
+5. Restart the relevant Splunk service or forwarder after configuration changes.
+6. Verify incoming events using Splunk Search.
+
+## 5. Verify Data
+
+Open Splunk Search & Reporting and run:
+
+```spl
+index=harsha
+| stats count by host source sourcetype
+```
+
+Confirm that the expected Windows and Kali sources appear. Do not assume a source is working until events are visible.
+
+## 6. Analysis and Detection
+
+Use the searches in the `queries/` directory to investigate authentication failures, suspicious activity, and other selected security events.
+
+## 7. Alerts and Dashboard
+
+- Configure saved searches as alerts in Splunk.
+- Create dashboard panels from validated SPL searches.
+- Test each alert with controlled lab events.
+- Save screenshots of the results.
+
+## 8. Troubleshooting
+
+- Confirm the Splunk service and Universal Forwarder are running.
+- Verify the Windows host IP and network connectivity.
+- Confirm the receiving port is enabled.
+- Check file paths and file permissions.
+- Verify that the target index exists and the search time range is correct.
+- Check forwarder and Splunk internal logs if events are missing.
+
+## 9. Security Notes
+
+Use this project only in systems and lab environments you are authorized to monitor. Do not commit passwords, tokens, private IP details you want to keep private, or other sensitive information to GitHub.

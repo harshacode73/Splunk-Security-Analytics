@@ -1,0 +1,4 @@
+index=harsha ("wsmprovhost.exe" OR "WinRM" OR "Microsoft-Windows-WinRM")
+| eval severity="MEDIUM", attack_type="WinRM / Remote Management Activity"
+| table _time host source sourcetype severity attack_type _raw
+| sort 0 - _time

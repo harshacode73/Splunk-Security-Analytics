@@ -1,0 +1,16 @@
+| No. | Query file | Purpose |
+|---:|---|---|
+| 1 | ssh_brute_force.spl | Detects 5 or more failed SSH logins within 3 minutes |
+| 2 | medium_severity.spl | Identifies 2–4 failed SSH logins within 3 minutes |
+| 3 | high_severity.spl | Identifies 5–9 failed SSH logins within 3 minutes |
+| 4 | critical_severity.spl | Identifies 10 or more failed SSH logins within 3 minutes |
+| 5 | powershell_detection.spl | Looks for potentially suspicious PowerShell commands |
+| 6 | winrm_detection.spl | Searches for WinRM and remote-management activity |
+| 7 | audit_log_cleared.spl | Looks for Windows Security Event ID 1102 and related messages |
+| 8 | ssh_successful_login.spl | Displays successful SSH logins |
+| 9 | ssh_invalid_user.spl | Detects attempts using invalid SSH usernames |
+| 10 | recent_security_events.spl | Displays recent events with basic keyword-based severity labels |
+| 11 | ssh_failures_by_source_ip.spl | Counts SSH failures by source IP address |
+| 12 | severity_counts.spl | Counts events by assigned severity |
+| 13 | events_by_host.spl | Summarizes event counts by host |
+| 14 | mitre_mapping.spl | Maps selected event patterns to potential MITRE ATT&CK techniques |

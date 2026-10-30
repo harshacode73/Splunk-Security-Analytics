@@ -1,0 +1,9 @@
+index=harsha
+| eval severity=case(
+    match(_raw,"(?i)critical|malware|ransomware"), "CRITICAL",
+    match(_raw,"(?i)failed password|invalid user|unauthorized|blocked"), "MEDIUM",
+    match(_raw,"(?i)warning|suspicious"), "LOW",
+    true(), "INFO")
+| table _time host source sourcetype severity _raw
+| sort 0 - _time
+| head 100

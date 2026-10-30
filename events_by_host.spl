@@ -1,0 +1,3 @@
+index=harsha
+| stats count AS event_count by host
+| sort 0 - event_count

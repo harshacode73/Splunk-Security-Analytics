@@ -1,0 +1,5 @@
+index=harsha "Accepted password"
+| rex field=_raw "(?i)Accepted password for (?<username>\S+) from (?<src_ip>\d{1,3}(?:\.\d{1,3}){3})"
+| eval severity="INFO", attack_type="Successful SSH Login"
+| table _time host username src_ip severity attack_type _raw
+| sort 0 - _time

@@ -1,0 +1,9 @@
+index=harsha ("powershell.exe" OR "pwsh.exe" OR "Microsoft-Windows-PowerShell")
+| eval event_text=lower(_raw)
+| eval severity=case(
+    like(event_text,"%encodedcommand%") OR like(event_text,"% -enc %") OR like(event_text,"%frombase64string%"), "HIGH",
+    like(event_text,"%executionpolicy bypass%") OR like(event_text,"%downloadstring%") OR like(event_text,"%invoke-expression%"), "MEDIUM",
+    true(), "LOW")
+| eval attack_type="PowerShell Activity"
+| table _time host source sourcetype severity attack_type _raw
+| sort 0 - _time

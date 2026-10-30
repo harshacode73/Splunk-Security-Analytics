@@ -1,0 +1,102 @@
+
+# Log Collection Guide
+
+## 1. Architecture
+
+Windows host (Splunk Enterprise) receives and indexes security events.
+
+Kali Linux (VirtualBox) uses the Splunk Universal Forwarder to send selected Linux log files to Splunk Enterprise.
+
+## 2. Windows Log Collection
+
+Windows OpenSSH Operational events are collected using a Splunk input configuration.
+
+Example configuration:
+
+```ini
+[WinEventLog://OpenSSH/Operational]
+disabled = 0
+index = harsha
+renderXml = false
+```
+
+Configuration location:
+
+`C:\Program Files\Splunk\etc\system\local\inputs.conf`
+
+Verify the events with:
+
+```spl
+index=harsha
+("Failed password" OR "Accepted password" OR "Invalid user")
+| table _time host source sourcetype _raw
+```
+
+## 3. Kali Linux Log Collection
+
+The Universal Forwarder sends selected Linux authentication logs to Splunk.
+
+Example input, if `/var/log/auth.log` exists:
+
+```ini
+[monitor:///var/log/auth.log]
+disabled = 0
+index = harsha
+sourcetype = linux_auth
+```
+
+Forwarder configuration location:
+
+`/opt/splunkforwarder/etc/system/local/inputs.conf`
+
+Verify the destination:
+
+```bash
+sudo /opt/splunkforwarder/bin/splunk list forward-server
+```
+
+Verify the configured inputs:
+
+```bash
+sudo /opt/splunkforwarder/bin/splunk list monitor
+```
+
+The receiving Splunk instance must have its receiving port enabled. Port 9997 is commonly used for Splunk-to-Splunk forwarding.
+
+## 4. Validate Incoming Events
+
+Search in Splunk:
+
+```spl
+index=harsha earliest=-24h
+| stats count by host source sourcetype
+```
+
+Then inspect Linux authentication events:
+
+```spl
+index=harsha sourcetype=linux_auth
+| sort - _time
+| table _time host source _raw
+```
+
+## 5. Troubleshooting
+
+If events are missing:
+
+- Confirm the source log file exists.
+- Confirm the forwarder is running.
+- Confirm the forwarding destination is correct.
+- Check connectivity to the receiving port.
+- Confirm that the input is enabled and the forwarder can read the file.
+- Verify the index and search time range.
+- Review Splunk internal logs for errors.
+
+## 6. Validation Status
+
+Record only verified results:
+
+- Windows OpenSSH events: Previously observed in the `harsha` index.
+- Kali authentication events: [Pending verification / Verified]
+- Forwarder connection: [Pending verification / Verified]
+- Missing events or errors: [Record findings]

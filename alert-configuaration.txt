@@ -1,0 +1,35 @@
+
+# SSH Brute-Force Detection Alert
+
+## Purpose
+
+Identify repeated SSH password failures from a source IP against a monitored host.
+
+## Data Source
+
+- Index: 'harsha'
+- Event type: SSH authentication failure
+- Source: Windows OpenSSH or Linux authentication logs, depending on the configured input
+
+## Detection Query
+
+See '../docs/alert-configuration.md' for the complete SPL search and configuration steps.
+
+## Detection Logic
+
+The starter threshold is five or more failures per source IP and destination host within the configured search time range.
+
+## Analyst Response
+
+1. Verify the source IP and destination host.
+2. Review the failed login events.
+3. Check for successful logins near the same time.
+4. Determine whether the activity is expected or suspicious.
+5. Document evidence and escalate according to the lab's severity criteria.
+
+## Validation
+
+- Alert enabled: [Yes / No]
+- Alert triggered during testing: [Yes / No]
+- Evidence screenshot: '../screenshots/'
+- Notes: [Add observations]

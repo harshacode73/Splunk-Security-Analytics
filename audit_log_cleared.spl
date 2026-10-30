@@ -1,0 +1,4 @@
+index=harsha (EventCode=1102 OR EventID=1102 OR "audit log was cleared" OR "The audit log was cleared")
+| eval severity="HIGH", attack_type="Windows Security Audit Log Cleared", mitre_technique="T1070.001"
+| table _time host source sourcetype EventCode EventID severity attack_type mitre_technique _raw
+| sort 0 - _time

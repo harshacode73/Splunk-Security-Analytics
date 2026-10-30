@@ -1,0 +1,17 @@
+| Stage | What we will configure |
+|---|---|
+| 1. Windows collection -Collect Windows OpenSSH and relevant Windows Security logs 
+| 2. Kali collection - Collect Linux authentication and system logs 
+| 3. Indexing - Store Windows and Kali logs in separate indexes, such as `windows` and `linux` 
+| 4. Analysis - Search logs, extract fields, identify suspicious behaviour, and investigate events 
+| 5. Detection - Identify repeated failed logins and other suspicious activity 
+| 6. Severity -Assign severity according to detection rules 
+| 7. Alerts -Configure scheduled searches, trigger conditions, and alert actions 
+| 8. Dashboard - Display events, severity counts, suspicious IPs, and detection results 
+
+
+docs/setup.md - Software, architecture, prerequisites, and setup steps
+docs/log-collection.md - Input configurations, forwarding, sources, and verification searches
+docs/log-analysis.md - SPL queries, detection logic, investigation workflow, limitations
+docs/alert-configuration.md - How to create, schedule, test, and troubleshoot alerts
+alerts/ssh_brute_force_alert.md	- Purpose, threshold, response steps, and test evidence for this alert

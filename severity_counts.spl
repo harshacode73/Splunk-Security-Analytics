@@ -1,0 +1,8 @@
+index=harsha
+| eval severity=case(
+    match(_raw,"(?i)critical|malware|ransomware"), "CRITICAL",
+    match(_raw,"(?i)Failed password|Invalid user|unauthorized"), "HIGH",
+    match(_raw,"(?i)warning|suspicious"), "MEDIUM",
+    true(), "LOW")
+| stats count AS event_count by severity
+| sort severity

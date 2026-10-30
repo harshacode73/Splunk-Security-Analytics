@@ -1,0 +1,11 @@
+index=harsha
+| eval event_text=lower(_raw)
+| eval mitre_technique=case(
+    like(event_text,"%failed password%") OR like(event_text,"%invalid user%"), "T1110 - Brute Force (potential)",
+    like(event_text,"%wsmprovhost.exe%") OR like(event_text,"%winrm%"), "T1021.006 - Windows Remote Management (potential)",
+    like(event_text,"%powershell%") OR like(event_text,"%pwsh.exe%"), "T1059.001 - PowerShell (potential)",
+    like(event_text,"%audit log was cleared%") OR like(event_text,"%eventcode=1102%"), "T1070.001 - Clear Windows Event Logs (potential)",
+    true(), "Review manually")
+| where mitre_technique!="Review manually"
+| table _time host mitre_technique _raw
+| sort 0 - _time

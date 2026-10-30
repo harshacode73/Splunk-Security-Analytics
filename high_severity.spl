@@ -1,0 +1,9 @@
+index=harsha "Failed password"
+| rex field=_raw "(?i)Failed password for (?:invalid user )?(?<username>\S+) from (?<src_ip>\d{1,3}(?:\.\d{1,3}){3})"
+| where isnotnull(src_ip)
+| sort 0 _time
+| streamstats time_window=180s count AS failed_attempts BY host src_ip
+| where failed_attempts>=5 AND failed_attempts<10
+| eval severity="HIGH", attack_type="Possible SSH Brute Force"
+| table _time host src_ip username failed_attempts severity attack_type
+| sort 0 - _time
